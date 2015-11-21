@@ -111,7 +111,7 @@ class Route:
         self.postcode = postcode
 
     def __unicode__(self):
-        output = u"""Output parameters:
+        output = """Output parameters:
 Country: %s
 D-Depot: %s
 O-Sort: %s
@@ -312,7 +312,7 @@ class RouteData(object):
                 start = int(service[1:4])
                 end = int(service[4:])
                 for i in range(start, end + 1):
-                    services_list.append(unicode(i))
+                    services_list.append(str(i))
             else:
                 services_list.append(service[1:])
 
@@ -444,7 +444,7 @@ class Router(object):
         # Save matched rows if there were any results
         if rows:
             self.add_condition(condition)
-        self.current_subset = [unicode(row[0]) for row in rows]
+        self.current_subset = [str(row[0]) for row in rows]
         return rows
 
     def select_country(self, parcel):
@@ -527,7 +527,7 @@ class Router(object):
 
     def select_depot(self, parcel):
         """Select all routes with the given depot."""
-        subset = "route IN (%s)" % ','.join([unicode(route) for route in self.current_subset])
+        subset = "route IN (%s)" % ','.join([str(route) for route in self.current_subset])
         cur = self.db.cursor()
         cur.execute("SELECT route FROM routedepots WHERE depot=%s AND %s" % (self.route_data.routingdepot,
                                                                              subset))
@@ -538,7 +538,7 @@ class Router(object):
         if not rows:
             raise RoutingDepotError("No route found for %r|%r|%r|%r|%r" % \
                   (parcel.country, parcel.postcode, parcel.service, self.route_data.routingdepot, subset))
-        self.current_subset = [unicode(row[0]) for row in rows]
+        self.current_subset = [str(row[0]) for row in rows]
 
 
 def get_route_without_cache(country=None, postcode=None, city=None, servicecode='101'):
@@ -615,6 +615,6 @@ def find_route(depot, servicecode, land, plz):
     warnings.warn("georoute.find_route() is deprecated use get_route() instead",
                   DeprecationWarning, stacklevel=2)
 
-    if unicode(depot) != '0142':
+    if str(depot) != '0142':
         raise RuntimeError("wrong depot")
-    return get_route(unicode(land), unicode(plz), servicecode=unicode(servicecode))
+    return get_route(str(land), str(plz), servicecode=str(servicecode))
